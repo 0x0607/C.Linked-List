@@ -1,22 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 /*---------------------------------------------------------*/
+struct value{
+    int number;
+    char str[64];
+};
+typedef struct value value;
 struct node{
-    int key;
+    struct value key;
     struct node *next;
 };
 typedef struct node node;
 /*---------------------------------------------------------*/
-node * insert(node *head,int key){
-    node *p,*q,*r; //¤u§@«ü¼Ð
+node * insert(node *head,value key){
+    node *p,*q,*r; //å·¥ä½œæŒ‡æ¨™
     p=(node *)malloc(sizeof(node));
     p->key=key;
     p->next=NULL;
     if(head==NULL){head=p;return head;}
-    if(head->key>p->key){p->next=head; head=p;}
+    if(head->key.number>p->key.number){p->next=head; head=p;}
     q=head;r=q;
-    while(q!=NULL&&q->key<=p->key){r=q;q=q->next;}
+    while(q!=NULL&&q->key.number<=p->key.number){r=q;q=q->next;}
     r->next=p;
     p->next=q;
     return head;}
@@ -24,7 +28,11 @@ node * insert(node *head,int key){
 void print_node(node *head){
     node *p;
     p=head;
-    while(p!=NULL){printf("%4d",p->key);p=p->next;}
+    //printf("\n%s %s","Number","String");
+    while(p!=NULL){
+        //printf("\n");
+        printf("{%d,%s} ",p->key.number,p->key.str);
+        p=p->next;}
     printf("\n");
 return ;}
 /*---------------------------------------------------------*/
@@ -36,48 +44,51 @@ int count_node(node *head){
     printf("\n");
 return i;}
 /*---------------------------------------------------------*/
-node *delete_node(node *head, int key){
+node *delete_node(node *head, value key){
     node *q,*p,*r;
-    if(!head){printf("¸ê®Æ­È¤£¦s¦b");return head;}
+    if(!head){printf("\nData does not exist");return head;}
     p=head;
-    if(head->key==key){head=head->next;free(p);return head;}
+    if(head->key.number==key.number){head=head->next;free(p);return head;}
     q=p;
-    while(p&&p->key<key){
+    while(p&&p->key.number<key.number){
         q=p;
         p=p->next;}
-    if(p&&p->key==key){
+    if(p&&p->key.number==key.number){
         q->next=p->next;
         free(p);
         return head;}
-    else{printf("§ä¤£¨ì­È\"%d\" ½Ð½T»{Áä¤J­È¬O§_½T\n",key);}
+    else{printf("Could not find value\"%d\" \nPlease confirm the value is correct\n",key.number);}
     return head;
 }
 /*---------------------------------------------------------*/
 int main(){
     node *head=NULL;
-    int input=0;
+    value input;
     int opt=0;
+    int i=0,j=0;
     while(1){
-        printf("| 1. ´¡¤J­È%8s2. ¦C¥X­È%8s3. §R°£­È|","","");
+        printf("|1. insert %8s2. show table%8s3. delete|","","");
         printf("\n==============================================\n");
-        printf("½ÐÁä¤J«ü¥O:");
+        printf("> ");
         scanf("%d",&opt);
         switch(opt){
             case 1:     //insert
-                printf("/insert-int ");
-                scanf("%d",&input);
+                printf("/insert --number ");
+                scanf("%d",&input.number);
+                printf("%8s--string "," ");
+                scanf("%s",input.str);
                 head=insert(head,input);
-                printf("node[%d]: ",count_node(head));
+                printf("node[0:%d]: ",count_node(head));
                 print_node(head);
                 break;
             case 2:     //print
+                printf("\n- Sort by Number -\n");
                 printf("/show \n");
                 printf("node[%d]: ",count_node(head));
                 print_node(head);
-
-            break;
+                break;
             case 3:     //insert
-                printf("/delete-int ");
+                printf("/delete --number ");
                 scanf("%d",&input);
                 head=delete_node(head,input);
                 printf("node[%d]: ",count_node(head));
@@ -86,7 +97,4 @@ int main(){
             default:system("cls");break;
         }
     printf("\n\n==============================================\n");}
-
-
-
 return 0;}
